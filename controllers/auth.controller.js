@@ -15,7 +15,6 @@ exports.verifyingToken = async (req, res) => {
 }
 
 exports.loginUser = async (req, res) => {
-  console.log("Hello")
   const { email, password } = req.body
 
   try {
@@ -27,12 +26,7 @@ exports.loginUser = async (req, res) => {
       })
     }
 
-    console.log("password", password)
-    console.log("foundUser", foundUser)
-
     const passCorrect = await bcryptjs.compare(password, foundUser.password)
-
-    console.log("passCorrect", passCorrect)
 
     if (!passCorrect) {
       return res.status(400).json({
@@ -61,6 +55,6 @@ exports.loginUser = async (req, res) => {
       }
     )
   } catch (error) {
-    console.log(error)
+    res.status(400).json(error)
   }
 }

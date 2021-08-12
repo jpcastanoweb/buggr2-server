@@ -9,7 +9,8 @@ const userController = require("./../controllers/user.controller")
 router.post(
   "/register",
   [
-    check("email", "Email is required").notEmpty().isEmail(),
+    check("email", "Email is required").notEmpty(),
+    check("email", "Please use a valid email.").isEmail(),
     check("password", "Password is required").notEmpty(),
     check(
       "password",
