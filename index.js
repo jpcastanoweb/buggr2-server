@@ -15,9 +15,8 @@ app.use(express.json({ extended: true }))
 
 // Routes
 
-app.get("/api", (req, res) => {
-  return res.json({ hola: "Hola Buggr2" })
-})
+app.use("/api/user", require("./routes/users.routes"))
+app.use("/api/auth", require("./routes/auth.routes"))
 
 // Server
 app.listen(process.env.PORT, () => {
