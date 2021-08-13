@@ -72,11 +72,9 @@ exports.registerUser = async (req, res) => {
   } catch (error) {
     console.log(error)
     if (error instanceof mongoose.Error.ValidationError) {
-      res.status(500).render("auth/signup", { msg: error.message })
+      res.status(500).json(error)
     } else if (error.code === 11000) {
-      res.status(500).render("auth/signup", {
-        msg: "Email or username are already in use. ",
-      })
+      res.status(500).json(error)
     } else {
       next(error)
     }
