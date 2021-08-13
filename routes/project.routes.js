@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 
 const { check } = require("express-validator")
-const opportunityController = require("./../controllers/opportunity.controller")
+const projectController = require("./../controllers/project.controller")
 
 router.post(
   "/create",
@@ -11,10 +11,11 @@ router.post(
     check("belongsTo", "Organization owner is required").notEmpty(),
     check("forCustomer", "Customer is required").notEmpty(),
     check("dollarValue", "Dollar value is required.").notEmpty(),
+    //add check for dates
   ],
-  opportunityController.createOpportunity
+  projectController.createProject
 )
 
-router.get("/:opportunityId", opportunityController.getSingleOpportunity)
+router.get("/:projectId", projectController.getSingleProject)
 
 module.exports = router

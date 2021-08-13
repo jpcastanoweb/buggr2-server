@@ -1,11 +1,12 @@
 const Organization = require("./../models/Organization.model")
 const Customer = require("./../models/Customer.model")
-const Opportunity = require("./../models/Opportunity.model")
+const Project = require("./../models/Project.model")
+
 const mongoose = require("mongoose")
 
 const { validationResult } = require("express-validator")
 
-exports.createOpportunity = async (req, res) => {
+exports.createProject = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -18,8 +19,8 @@ exports.createOpportunity = async (req, res) => {
     forCustomer,
     belongsTo,
     dollarValue,
-    openedDate,
-    closeDate,
+    startDate,
+    dueDate,
     currentStage,
   } = req.body
 
@@ -27,7 +28,6 @@ exports.createOpportunity = async (req, res) => {
   const forCustomerObject = mongoose.Types.ObjectId(forCustomer)
 
   try {
-    //create new opp
     const data = {
       title,
       belongsTo: belongsToObject,
@@ -35,39 +35,41 @@ exports.createOpportunity = async (req, res) => {
       dollarValue,
     }
 
-    data.openedDate = openedDate ? openedDate : new Date()
-    data.closeDate = closeDate ? closeDate : null
-    data.currentStage = currentStage ? currentStage : "New"
+    data.startDate = startDate ? startDate : new Date()
+    data.dueDate = dueDate ? dueDate : null
+    data.currentStage = currentStage ? currentStage : "Analysis"
 
-    const newOpp = await Opportunity.create(data)
+    console.log("Data", data)
+    const newProject = await Project.create(data)
 
-    //add  opp to customer's opps
+    console.log(newProject)
+
+    //add project to customer's projects
     await Customer.findByIdAndUpdate(forCustomer, {
-      $push: { opportunities: newOpp._id },
+      $push: { projects: newProject._id },
     })
 
-    //add opp to currentOrg's opps
+    //add project to currentOrg's opps
     await Organization.findByIdAndUpdate(belongsTo, {
-      $push: { opportunities: newOpp._id },
+      $push: { projects: newProject._id },
     })
 
-    //return response
-    return res.json(newOpp)
+    return res.json(newProject)
   } catch (error) {
-    console.log("Error while creating project", error)
-    return res.json(error)
+    console.log(error)
+    return res.status(400).json({ error: error })
   }
 }
 
-exports.getSingleOpportunity = async (req, res) => {
-  const { opportunityId } = req.params
+exports.getSingleProject = async (req, res) => {
+  const { projectId } = req.params
 
   try {
-    const opp = await Opportunity.findById(opportunityId)
+    const project = await Project.findById(projectId)
       .populate("belongsTo")
       .populate("forCustomer")
 
-    return res.json(opp)
+    return res.json(project)
   } catch (error) {
     res.status(400).json(error)
   }
