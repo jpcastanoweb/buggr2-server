@@ -15,11 +15,11 @@ app.use(express.json({ extended: true }))
 
 // Routes
 
-app.use("/api/user", require("./routes/users.routes"))
+app.use("/api/users", require("./routes/users.routes"))
 app.use("/api/auth", require("./routes/auth.routes"))
-app.use("/api/customer", require("./routes/customer.routes"))
-app.use("/api/opportunity", require("./routes/opportunity.routes"))
-app.use("/api/project", require("./routes/project.routes"))
+app.use("/api/customers", require("./routes/customer.routes"))
+app.use("/api/opportunities", require("./routes/opportunity.routes"))
+app.use("/api/projects", require("./routes/project.routes"))
 
 // Server
 app.listen(process.env.PORT, () => {
