@@ -72,3 +72,67 @@ exports.getSingleOpportunity = async (req, res) => {
     res.status(400).json(error)
   }
 }
+
+exports.updateOpportunity = async (req, res) => {
+  console.log("Entered update opportunity")
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { title, openedDate, closeDate, dollarValue, currentStage } = req.body
+    const { opportunityId } = req.params
+
+    console.log(title, openedDate, closeDate, dollarValue, currentStage)
+
+    const updatedOpportunity = await Opportunity.findOneAndUpdate(
+      { _id: opportunityId },
+      {
+        title,
+        openedDate,
+        closeDate,
+        dollarValue,
+        currentStage,
+      },
+      {
+        runValidators: true,
+        new: true,
+      }
+    )
+
+    res.json(updatedOpportunity)
+  } catch (error) {
+    console.log("Error editing opportunity: ", error.message)
+    res.status(400).json(error)
+  }
+}
+
+exports.deleteOpportunity = async (req, res) => {
+  const { opportunityId } = req.params
+
+  try {
+    const opportunity = await Opportunity.findById(opportunityId)
+
+    // delete id from customer projects
+    await Customer.findByIdAndUpdate(opportunity.forCustomer, {
+      $pull: { opportunities: opportunityId },
+    })
+    // delete id from org opps
+    await Organization.findByIdAndUpdate(opportunity.belongsTo, {
+      $pull: { opportunities: opportunityId },
+    })
+
+    // delete opp
+    const deletedOpportunity = await Opportunity.findByIdAndDelete(
+      opportunityId
+    )
+
+    res.json(deletedOpportunity)
+  } catch (error) {
+    console.log("Error deleting opportunity: ", error.message)
+    res.status(400).json(error)
+  }
+}

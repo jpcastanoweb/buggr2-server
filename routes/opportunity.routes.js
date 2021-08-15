@@ -17,4 +17,19 @@ router.post(
 
 router.get("/:opportunityId", opportunityController.getSingleOpportunity)
 
+router.post(
+  "/:opportunityId/edit",
+  [
+    check("title", "Title is required").notEmpty(),
+    check("openedDate", "Opened Date  is required").notEmpty(),
+    check("closeDate", "Close Date is required").notEmpty(),
+    check("dollarValue", "Dollar value is required.").notEmpty(),
+    check("currentStage", "Stage is required.").notEmpty(),
+    //add check for dates
+  ],
+  opportunityController.updateOpportunity
+)
+
+router.post("/:opportunityId/delete", opportunityController.deleteOpportunity)
+
 module.exports = router
