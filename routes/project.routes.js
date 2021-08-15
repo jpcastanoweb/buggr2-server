@@ -18,4 +18,19 @@ router.post(
 
 router.get("/:projectId", projectController.getSingleProject)
 
+router.post(
+  "/:projectId/edit",
+  [
+    check("title", "Title is required").notEmpty(),
+    check("startDate", "Start Date  is required").notEmpty(),
+    check("dueDate", "Due Date is required").notEmpty(),
+    check("dollarValue", "Dollar value is required.").notEmpty(),
+    check("currentStage", "Stage is required.").notEmpty(),
+    //add check for dates
+  ],
+  projectController.updateProject
+)
+
+router.post("/:projectId/delete", projectController.deleteProject)
+
 module.exports = router
