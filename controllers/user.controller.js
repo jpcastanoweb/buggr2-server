@@ -20,7 +20,6 @@ exports.registerUser = async (req, res) => {
     email,
     firstName,
     lastName,
-    organizations: [],
   }
 
   try {
@@ -78,5 +77,32 @@ exports.registerUser = async (req, res) => {
     } else {
       next(error)
     }
+  }
+}
+
+exports.updateUser = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { userId, user } = req.body
+
+    const userData = {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, userData, {
+      new: true,
+    })
+
+    return res.json(updatedUser)
+  } catch (error) {
+    res.status(400).json(error)
   }
 }

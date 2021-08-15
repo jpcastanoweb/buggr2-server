@@ -58,3 +58,35 @@ exports.getSingleCustomer = async (req, res) => {
     res.json(error)
   }
 }
+
+exports.updateCustomer = async (req, res) => {
+  const { customerId } = req.params
+
+  if (!customerId) {
+    return res.status(400).json({
+      msg: "No customer id supplied.",
+    })
+  }
+
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(403).json({
+      msg: errors.array(),
+    })
+  }
+
+  const { name } = req.body
+
+  try {
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      customerId,
+      { name },
+      { new: true }
+    )
+
+    console.log(updatedCustomer)
+    res.json(updatedCustomer)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}

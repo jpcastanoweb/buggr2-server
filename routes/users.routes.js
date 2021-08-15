@@ -6,6 +6,7 @@ const userController = require("./../controllers/user.controller")
 
 // User Creation
 
+// --- CREATE
 router.post(
   "/register",
   [
@@ -20,6 +21,18 @@ router.post(
     check("lastName", "Last Name is required.").notEmpty(),
   ],
   userController.registerUser
+)
+
+// --- UPDATE
+router.post(
+  "/edit",
+  [
+    check("user.email", "Email is required").notEmpty(),
+    check("user.email", "Please use a valid email.").isEmail(),
+    check("user.firstName", "First Name is required.").notEmpty(),
+    check("user.lastName", "Last Name is required.").notEmpty(),
+  ],
+  userController.updateUser
 )
 
 module.exports = router
