@@ -24,4 +24,7 @@ router.post(
   customerController.updateCustomer
 )
 
+// --- DELETE
+router.post("/:customerId/delete", customerController.deleteCustomer)
+
 module.exports = router

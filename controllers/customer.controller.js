@@ -90,3 +90,45 @@ exports.updateCustomer = async (req, res) => {
     res.status(400).json(error)
   }
 }
+
+exports.deleteCustomer = async (req, res) => {
+  const { customerId } = req.params
+
+  try {
+    const customer = await Customer.findById(customerId)
+
+    // delete all projects
+    for (let i = 0; i < customer.projects.length; i++) {
+      // delete from org
+      await Organization.findByIdAndUpdate(customer.belongsTo, {
+        $pull: { projects: customer.projects[i] },
+      })
+      // delete project
+      await Project.findByIdAndDelete(customer.projects[i])
+    }
+
+    // delete opportunities
+    for (let i = 0; i < customer.opportunities.length; i++) {
+      //delete from org
+      await Organization.findByIdAndUpdate(customer.belongsTo, {
+        $pull: { opportunities: customer.opportunities[i] },
+      })
+      //delete opportunity
+      await Opportunity.findByIdAndDelete(customer.opportunities[i])
+    }
+
+    // delete customer from org.customers
+    await Organization.findByIdAndUpdate(customer.belongsTo, {
+      $pull: { customers: customerId },
+    })
+
+    //delete customer
+    const deletedCustomer = await Customer.findByIdAndDelete(customerId)
+
+    //redirect
+    res.json(deletedCustomer)
+  } catch (error) {
+    console.log("Error while deleting customer: ", error.message)
+    res.status(400).json(error)
+  }
+}
