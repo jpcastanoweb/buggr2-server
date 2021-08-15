@@ -1,9 +1,30 @@
 const Organization = require("./../models/Organization.model")
 const Customer = require("./../models/Customer.model")
 const Opportunity = require("./../models/Opportunity.model")
+const Project = require("./../models/Project.model")
 const mongoose = require("mongoose")
 
 const { validationResult } = require("express-validator")
+
+exports.getAllOpportunities = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  const { belongsTo } = req.body
+  try {
+    let opps = await Opportunity.find({
+      belongsTo,
+    }).populate("forCustomer")
+
+    return res.json(opps)
+  } catch (error) {
+    console.log("Error loading opportunities", error.message)
+  }
+}
 
 exports.createOpportunity = async (req, res) => {
   const errors = validationResult(req)
@@ -134,5 +155,66 @@ exports.deleteOpportunity = async (req, res) => {
   } catch (error) {
     console.log("Error deleting opportunity: ", error.message)
     res.status(400).json(error)
+  }
+}
+
+exports.convertOpportunity = async (req, res) => {
+  console.log("Starting conversion")
+  const { opportunityId } = req.params
+  const { title, dueDate } = req.body
+
+  try {
+    const opp = await Opportunity.findById(opportunityId)
+
+    const startDate = new Date()
+    const newDocuments = []
+
+    for (let i = 0; i < opp.documents.length; i++) {
+      newDocuments.push({
+        name: opp.documents[i].name,
+        fileType: opp.documents[i].fileType,
+        docUrl: opp.documents[i].docUrl,
+      })
+    }
+
+    // create new project
+    const newProject = await Project.create({
+      title,
+      belongsTo: opp.belongsTo,
+      forCustomer: opp.forCustomer,
+      startDate,
+      dueDate,
+      wasOpp: true,
+      oppOpenedDate: opp.openedDate,
+      oppCloseDate: opp.closeDate,
+      currentStage: "Analysis",
+      dollarValue: opp.dollarValue,
+      documents: newDocuments,
+    })
+
+    console.log("Created project")
+    await Opportunity.findByIdAndUpdate(opportunityId, {
+      currentStage: "Closed - Won",
+    })
+
+    console.log("switched to won")
+
+    // adding to org and customer
+    await Organization.findByIdAndUpdate(newProject.belongsTo, {
+      $push: { projects: newProject._id },
+    })
+
+    console.log("pushed project to org")
+
+    await Customer.findByIdAndUpdate(newProject.forCustomer, {
+      $push: { projects: newProject._id },
+    })
+
+    console.log("New project", newProject)
+
+    res.json(newProject)
+  } catch (error) {
+    console.log("Error converting opp to project", error.message)
+    res.status(400).json({ msg: error.message })
   }
 }

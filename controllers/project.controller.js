@@ -6,6 +6,41 @@ const mongoose = require("mongoose")
 
 const { validationResult } = require("express-validator")
 
+exports.getAllProjects = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  const { belongsTo } = req.body
+
+  try {
+    let projects = await Project.find({
+      belongsTo,
+    }).populate("forCustomer")
+
+    return res.json(projects)
+  } catch (error) {
+    console.log("Error loading projects", error.message)
+  }
+}
+
+exports.getSingleProject = async (req, res) => {
+  const { projectId } = req.params
+
+  try {
+    const project = await Project.findById(projectId)
+      .populate("belongsTo")
+      .populate("forCustomer")
+
+    return res.json(project)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}
+
 exports.createProject = async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -58,20 +93,6 @@ exports.createProject = async (req, res) => {
   } catch (error) {
     console.log(error)
     return res.status(400).json({ error: error })
-  }
-}
-
-exports.getSingleProject = async (req, res) => {
-  const { projectId } = req.params
-
-  try {
-    const project = await Project.findById(projectId)
-      .populate("belongsTo")
-      .populate("forCustomer")
-
-    return res.json(project)
-  } catch (error) {
-    res.status(400).json(error)
   }
 }
 

@@ -4,6 +4,14 @@ const router = express.Router()
 const { check } = require("express-validator")
 const opportunityController = require("./../controllers/opportunity.controller")
 
+router.get(
+  "/",
+  [check("belongsTo", "Org Id is required").notEmpty()],
+  opportunityController.getAllOpportunities
+)
+
+router.get("/:opportunityId", opportunityController.getSingleOpportunity)
+
 router.post(
   "/create",
   [
@@ -14,8 +22,6 @@ router.post(
   ],
   opportunityController.createOpportunity
 )
-
-router.get("/:opportunityId", opportunityController.getSingleOpportunity)
 
 router.post(
   "/:opportunityId/edit",
@@ -32,4 +38,12 @@ router.post(
 
 router.post("/:opportunityId/delete", opportunityController.deleteOpportunity)
 
+router.post(
+  "/:opportunityId/convert",
+  [
+    check("title", "Project title is required.").notEmpty(),
+    check("dueDate", "Due date is required.").notEmpty(),
+  ],
+  opportunityController.convertOpportunity
+)
 module.exports = router
