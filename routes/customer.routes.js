@@ -22,12 +22,12 @@ router.get("/:customerid", customerController.getSingleCustomer)
 
 // --- UPDATE
 router.post(
-  "/:customerId/edit",
+  "/:customerid/edit",
   [check("name", "Name is Required").notEmpty()],
   customerController.updateCustomer
 )
 
 // --- DELETE
-router.post("/:customerId/delete", customerController.deleteCustomer)
+router.post("/:customerid/delete", customerController.deleteCustomer)
 
 module.exports = router

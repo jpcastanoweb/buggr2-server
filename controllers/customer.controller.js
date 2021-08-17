@@ -72,9 +72,10 @@ exports.getSingleCustomer = async (req, res) => {
 }
 
 exports.updateCustomer = async (req, res) => {
-  const { customerId } = req.params
+  console.log(req)
+  const { customerid } = req.params
 
-  if (!customerId) {
+  if (!customerid) {
     return res.status(400).json({
       msg: "No customer id supplied.",
     })
@@ -91,7 +92,7 @@ exports.updateCustomer = async (req, res) => {
 
   try {
     const updatedCustomer = await Customer.findByIdAndUpdate(
-      customerId,
+      customerid,
       { name },
       { new: true }
     )
@@ -102,10 +103,10 @@ exports.updateCustomer = async (req, res) => {
 }
 
 exports.deleteCustomer = async (req, res) => {
-  const { customerId } = req.params
+  const { customerid } = req.params
 
   try {
-    const customer = await Customer.findById(customerId)
+    const customer = await Customer.findById(customerid)
 
     // delete all projects
     for (let i = 0; i < customer.projects.length; i++) {
@@ -129,11 +130,11 @@ exports.deleteCustomer = async (req, res) => {
 
     // delete customer from org.customers
     await Organization.findByIdAndUpdate(customer.belongsTo, {
-      $pull: { customers: customerId },
+      $pull: { customers: customerid },
     })
 
     //delete customer
-    const deletedCustomer = await Customer.findByIdAndDelete(customerId)
+    const deletedCustomer = await Customer.findByIdAndDelete(customerid)
 
     //redirect
     res.json(deletedCustomer)
