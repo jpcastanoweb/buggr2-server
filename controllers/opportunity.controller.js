@@ -88,7 +88,6 @@ exports.getSingleOpportunity = async (req, res) => {
 }
 
 exports.updateOpportunity = async (req, res) => {
-  console.log("Entered update opportunity")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -99,8 +98,6 @@ exports.updateOpportunity = async (req, res) => {
   try {
     const { title, openedDate, closeDate, dollarValue, currentStage } = req.body
     const { opportunityId } = req.params
-
-    console.log(title, openedDate, closeDate, dollarValue, currentStage)
 
     const updatedOpportunity = await Opportunity.findOneAndUpdate(
       { _id: opportunityId },
@@ -152,7 +149,6 @@ exports.deleteOpportunity = async (req, res) => {
 }
 
 exports.convertOpportunity = async (req, res) => {
-  console.log("Starting conversion")
   const { opportunityId } = req.params
   const { title, dueDate } = req.body
 
@@ -184,26 +180,18 @@ exports.convertOpportunity = async (req, res) => {
       dollarValue: opp.dollarValue,
       documents: newDocuments,
     })
-
-    console.log("Created project")
     await Opportunity.findByIdAndUpdate(opportunityId, {
       currentStage: "Closed - Won",
     })
-
-    console.log("switched to won")
 
     // adding to org and customer
     await Organization.findByIdAndUpdate(newProject.belongsTo, {
       $push: { projects: newProject._id },
     })
 
-    console.log("pushed project to org")
-
     await Customer.findByIdAndUpdate(newProject.forCustomer, {
       $push: { projects: newProject._id },
     })
-
-    console.log("New project", newProject)
 
     res.json(newProject)
   } catch (error) {

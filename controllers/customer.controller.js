@@ -42,8 +42,6 @@ exports.createCustomer = async (req, res) => {
   } catch (error) {
     console.log("Error creating customer", error.message)
   }
-
-  console.log(name, belongsTo)
 }
 
 exports.getSingleCustomer = async (req, res) => {
@@ -57,7 +55,8 @@ exports.getSingleCustomer = async (req, res) => {
 
   try {
     const foundCustomer = await Customer.findById(customerId)
-    console.log(foundCustomer)
+      .populate("opportunities")
+      .populate("projects")
 
     if (!foundCustomer) {
       res.status(400).json({
@@ -96,8 +95,6 @@ exports.updateCustomer = async (req, res) => {
       { name },
       { new: true }
     )
-
-    console.log(updatedCustomer)
     res.json(updatedCustomer)
   } catch (error) {
     res.status(400).json(error)

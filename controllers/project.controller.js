@@ -67,10 +67,7 @@ exports.createProject = async (req, res) => {
     data.dueDate = dueDate ? dueDate : null
     data.currentStage = currentStage ? currentStage : "Analysis"
 
-    console.log("Data", data)
     const newProject = await Project.create(data)
-
-    console.log(newProject)
 
     //add project to customer's projects
     await Customer.findByIdAndUpdate(forCustomer, {
@@ -90,7 +87,6 @@ exports.createProject = async (req, res) => {
 }
 
 exports.updateProject = async (req, res) => {
-  console.log("Entered update project")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -101,8 +97,6 @@ exports.updateProject = async (req, res) => {
   try {
     const { title, startDate, dueDate, dollarValue, currentStage } = req.body
     const { projectId } = req.params
-
-    console.log(title, startDate, dueDate, dollarValue, currentStage)
 
     const updatedProject = await Project.findOneAndUpdate(
       { _id: projectId },

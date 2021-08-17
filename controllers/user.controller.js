@@ -44,8 +44,6 @@ exports.registerUser = async (req, res) => {
       { $push: { organizations: newOrg._id } },
       { new: true }
     )
-    console.log("User: ", updatedUser)
-    console.log("New Org: ", newOrg)
 
     // User created, creating json web token
     // CREATE A JWT

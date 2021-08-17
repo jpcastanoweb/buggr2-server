@@ -3,7 +3,6 @@ const mongoose = require("mongoose")
 const Organization = require("./../models/Organization.model")
 
 exports.getSingleOrg = async (req, res) => {
-  console.log("entered getsingle org")
   const { orgId } = req.params
 
   try {
