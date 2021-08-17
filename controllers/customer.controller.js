@@ -46,7 +46,6 @@ exports.createCustomer = async (req, res) => {
 
 exports.getSingleCustomer = async (req, res) => {
   const { customerid } = req.params
-  console.log("Customer id:", customerid)
 
   if (!customerid) {
     return res.status(400).json({
