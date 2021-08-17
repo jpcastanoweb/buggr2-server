@@ -20,6 +20,7 @@ app.use("/api/auth", require("./routes/auth.routes"))
 app.use("/api/customers", require("./routes/customer.routes"))
 app.use("/api/opportunities", require("./routes/opportunity.routes"))
 app.use("/api/projects", require("./routes/project.routes"))
+app.use("/api/orgs", require("./routes/org.routes"))
 
 // Server
 app.listen(process.env.PORT, () => {
