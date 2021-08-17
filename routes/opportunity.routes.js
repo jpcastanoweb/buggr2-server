@@ -6,7 +6,7 @@ const opportunityController = require("./../controllers/opportunity.controller")
 
 router.post("/", opportunityController.getAllOpportunities)
 
-router.get("/:opportunityId", opportunityController.getSingleOpportunity)
+router.get("/:opportunityid", opportunityController.getSingleOpportunity)
 
 router.post(
   "/create",
@@ -20,11 +20,10 @@ router.post(
 )
 
 router.post(
-  "/:opportunityId/edit",
+  "/:opportunityid/edit",
   [
     check("title", "Title is required").notEmpty(),
     check("openedDate", "Opened Date  is required").notEmpty(),
-    check("closeDate", "Close Date is required").notEmpty(),
     check("dollarValue", "Dollar value is required.").notEmpty(),
     check("currentStage", "Stage is required.").notEmpty(),
     //add check for dates
@@ -32,10 +31,10 @@ router.post(
   opportunityController.updateOpportunity
 )
 
-router.post("/:opportunityId/delete", opportunityController.deleteOpportunity)
+router.post("/:opportunityid/delete", opportunityController.deleteOpportunity)
 
 router.post(
-  "/:opportunityId/convert",
+  "/:opportunityid/convert",
   [
     check("title", "Project title is required.").notEmpty(),
     check("dueDate", "Due date is required.").notEmpty(),

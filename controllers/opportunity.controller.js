@@ -74,10 +74,10 @@ exports.createOpportunity = async (req, res) => {
 }
 
 exports.getSingleOpportunity = async (req, res) => {
-  const { opportunityId } = req.params
+  const { opportunityid } = req.params
 
   try {
-    const opp = await Opportunity.findById(opportunityId)
+    const opp = await Opportunity.findById(opportunityid)
       .populate("belongsTo")
       .populate("forCustomer")
 
@@ -97,10 +97,10 @@ exports.updateOpportunity = async (req, res) => {
 
   try {
     const { title, openedDate, closeDate, dollarValue, currentStage } = req.body
-    const { opportunityId } = req.params
+    const { opportunityid } = req.params
 
     const updatedOpportunity = await Opportunity.findOneAndUpdate(
-      { _id: opportunityId },
+      { _id: opportunityid },
       {
         title,
         openedDate,
@@ -122,23 +122,23 @@ exports.updateOpportunity = async (req, res) => {
 }
 
 exports.deleteOpportunity = async (req, res) => {
-  const { opportunityId } = req.params
+  const { opportunityid } = req.params
 
   try {
-    const opportunity = await Opportunity.findById(opportunityId)
+    const opportunity = await Opportunity.findById(opportunityid)
 
     // delete id from customer projects
     await Customer.findByIdAndUpdate(opportunity.forCustomer, {
-      $pull: { opportunities: opportunityId },
+      $pull: { opportunities: opportunityid },
     })
     // delete id from org opps
     await Organization.findByIdAndUpdate(opportunity.belongsTo, {
-      $pull: { opportunities: opportunityId },
+      $pull: { opportunities: opportunityid },
     })
 
     // delete opp
     const deletedOpportunity = await Opportunity.findByIdAndDelete(
-      opportunityId
+      opportunityid
     )
 
     res.json(deletedOpportunity)
@@ -149,11 +149,11 @@ exports.deleteOpportunity = async (req, res) => {
 }
 
 exports.convertOpportunity = async (req, res) => {
-  const { opportunityId } = req.params
+  const { opportunityid } = req.params
   const { title, dueDate } = req.body
 
   try {
-    const opp = await Opportunity.findById(opportunityId)
+    const opp = await Opportunity.findById(opportunityid)
 
     const startDate = new Date()
     const newDocuments = []
@@ -180,7 +180,7 @@ exports.convertOpportunity = async (req, res) => {
       dollarValue: opp.dollarValue,
       documents: newDocuments,
     })
-    await Opportunity.findByIdAndUpdate(opportunityId, {
+    await Opportunity.findByIdAndUpdate(opportunityid, {
       currentStage: "Closed - Won",
     })
 
