@@ -5,11 +5,7 @@ const { check } = require("express-validator")
 const customerController = require("./../controllers/customer.controller")
 
 // GET ALL
-router.get(
-  "/",
-  [check("belongsTo", "Org Id is required").notEmpty()],
-  customerController.getAllCustomers
-)
+router.post("/", customerController.getAllCustomers)
 
 // --- CREATE
 router.post(

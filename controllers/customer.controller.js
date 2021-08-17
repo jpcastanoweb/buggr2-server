@@ -4,19 +4,24 @@ const Customer = require("./../models/Customer.model")
 const { validationResult } = require("express-validator")
 
 exports.getAllCustomers = async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      msg: errors.array(),
-    })
-  }
+  // const errors = validationResult(req)
+  // if (!errors.isEmpty()) {
+  //   return res.status(400).json({
+  //     msg: errors.array(),
+  //   })
+  // }
 
   const { belongsTo } = req.body
+  // console.log(req)
+  // if (!belongsTo) belongsTo = req.params.belongsTo
+
+  console.log(belongsTo)
   try {
     let customers = await Customer.find({
       belongsTo,
     })
 
+    console.log(customers)
     return res.json(customers)
   } catch (error) {
     console.log("Error loading customers", error.message)
