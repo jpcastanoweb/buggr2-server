@@ -7,13 +7,6 @@ const mongoose = require("mongoose")
 const { validationResult } = require("express-validator")
 
 exports.getAllProjects = async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      msg: errors.array(),
-    })
-  }
-
   const { belongsTo } = req.body
 
   try {

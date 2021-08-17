@@ -4,11 +4,7 @@ const router = express.Router()
 const { check } = require("express-validator")
 const projectController = require("./../controllers/project.controller")
 
-router.get(
-  "/",
-  [check("belongsTo", "Org Id is required").notEmpty()],
-  projectController.getAllProjects
-)
+router.post("/", projectController.getAllProjects)
 
 router.get("/:projectId", projectController.getSingleProject)
 

@@ -4,11 +4,7 @@ const router = express.Router()
 const { check } = require("express-validator")
 const opportunityController = require("./../controllers/opportunity.controller")
 
-router.get(
-  "/",
-  [check("belongsTo", "Org Id is required").notEmpty()],
-  opportunityController.getAllOpportunities
-)
+router.post("/", opportunityController.getAllOpportunities)
 
 router.get("/:opportunityId", opportunityController.getSingleOpportunity)
 
