@@ -21,10 +21,10 @@ exports.getAllProjects = async (req, res) => {
 }
 
 exports.getSingleProject = async (req, res) => {
-  const { projectId } = req.params
+  const { projectid } = req.params
 
   try {
-    const project = await Project.findById(projectId)
+    const project = await Project.findById(projectid)
       .populate("belongsTo")
       .populate("forCustomer")
 
@@ -96,10 +96,10 @@ exports.updateProject = async (req, res) => {
 
   try {
     const { title, startDate, dueDate, dollarValue, currentStage } = req.body
-    const { projectId } = req.params
+    const { projectid } = req.params
 
     const updatedProject = await Project.findOneAndUpdate(
-      { _id: projectId },
+      { _id: projectid },
       {
         title,
         startDate,
@@ -121,22 +121,22 @@ exports.updateProject = async (req, res) => {
 }
 
 exports.deleteProject = async (req, res) => {
-  const { projectId } = req.params
+  const { projectid } = req.params
 
   try {
-    const project = await Project.findById(projectId)
+    const project = await Project.findById(projectid)
 
     // delete id from customer projects
     await Customer.findByIdAndUpdate(project.forCustomer, {
-      $pull: { projects: projectId },
+      $pull: { projects: projectid },
     })
     // delete id from org opps
     await Organization.findByIdAndUpdate(project.belongsTo, {
-      $pull: { projects: projectId },
+      $pull: { projects: projectid },
     })
 
     // delete opp
-    const deletedProject = await Project.findByIdAndDelete(projectId)
+    const deletedProject = await Project.findByIdAndDelete(projectid)
 
     res.json(deletedProject)
   } catch (error) {

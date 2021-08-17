@@ -6,7 +6,7 @@ const projectController = require("./../controllers/project.controller")
 
 router.post("/", projectController.getAllProjects)
 
-router.get("/:projectId", projectController.getSingleProject)
+router.get("/:projectid", projectController.getSingleProject)
 
 router.post(
   "/create",
@@ -21,7 +21,7 @@ router.post(
 )
 
 router.post(
-  "/:projectId/edit",
+  "/:projectid/edit",
   [
     check("title", "Title is required").notEmpty(),
     check("startDate", "Start Date  is required").notEmpty(),
@@ -33,6 +33,6 @@ router.post(
   projectController.updateProject
 )
 
-router.post("/:projectId/delete", projectController.deleteProject)
+router.post("/:projectid/delete", projectController.deleteProject)
 
 module.exports = router
