@@ -18,7 +18,7 @@ router.post(
 )
 
 // --- READ
-router.get("/:customerId", customerController.getSingleCustomer)
+router.get("/:customerid", customerController.getSingleCustomer)
 
 // --- UPDATE
 router.post(

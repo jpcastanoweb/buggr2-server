@@ -45,16 +45,17 @@ exports.createCustomer = async (req, res) => {
 }
 
 exports.getSingleCustomer = async (req, res) => {
-  const { customerId } = req.params
+  const { customerid } = req.params
+  console.log("Customer id:", customerid)
 
-  if (!customerId) {
+  if (!customerid) {
     return res.status(400).json({
       msg: "No customer id supplied.",
     })
   }
 
   try {
-    const foundCustomer = await Customer.findById(customerId)
+    const foundCustomer = await Customer.findById(customerid)
       .populate("opportunities")
       .populate("projects")
 
