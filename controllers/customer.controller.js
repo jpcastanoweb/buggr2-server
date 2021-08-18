@@ -89,12 +89,12 @@ exports.updateCustomer = async (req, res) => {
     })
   }
 
-  const { name } = req.body
+  const { name, mainContact } = req.body
 
   try {
     const updatedCustomer = await Customer.findByIdAndUpdate(
       customerid,
-      { name },
+      { name, mainContact },
       { new: true }
     )
     res.json(updatedCustomer)
