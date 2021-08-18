@@ -97,6 +97,14 @@ exports.updateContact = async (req, res) => {
 
 exports.deleteContact = async (req, res) => {
   const { contactid } = req.params
+  const { ownerid } = req.body
+
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(403).json({
+      msg: errors.array(),
+    })
+  }
 
   if (!contactid) {
     return res.status(400).json({
@@ -105,9 +113,32 @@ exports.deleteContact = async (req, res) => {
   }
 
   try {
-    const deletedContact = await Contact.findByIdAndDelete(contactid)
-    res.json(deletedContact)
+    // delete as main contact if main contact
+    const customer = await Customer.findById(ownerid)
+    console.log("Customer found", customer)
+
+    if (!customer) {
+      res.status(400).json({
+        msg: "Owner customer not found",
+      })
+    }
+
+    // pull from customer's list of contacts and delete as main contact if main contact
+    if (customer.mainContact.equals(contactid)) {
+      await Customer.findByIdAndUpdate(ownerid, {
+        mainContact: null,
+        $pull: { contacts: contactid },
+      })
+    } else {
+      await Customer.findByIdAndUpdate(ownerid, {
+        $pull: { contacts: contactid },
+      })
+    }
+
+    // delete contact from db
+    await Contact.findByIdAndDelete(contactid)
   } catch (error) {
+    // console.log(error)
     res.status(400).json(error)
   }
 }

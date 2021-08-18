@@ -72,7 +72,6 @@ exports.getSingleCustomer = async (req, res) => {
 }
 
 exports.updateCustomer = async (req, res) => {
-  console.log(req)
   const { customerid } = req.params
 
   if (!customerid) {
@@ -142,4 +141,34 @@ exports.deleteCustomer = async (req, res) => {
     console.log("Error while deleting customer: ", error.message)
     res.status(400).json(error)
   }
+}
+
+exports.assignMainContact = async (req, res) => {
+  const { customerid } = req.params
+
+  if (!customerid) {
+    return res.status(400).json({
+      msg: "No customer id supplied.",
+    })
+  }
+
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(403).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { contactid } = req.body
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      customerid,
+      {
+        mainContact: contactid,
+      },
+      { new: true }
+    )
+
+    res.json(updatedCustomer)
+  } catch (error) {}
 }

@@ -30,4 +30,10 @@ router.post(
 // --- DELETE
 router.post("/:customerid/delete", customerController.deleteCustomer)
 
+// --- ASSIGN MAIN CONTACT
+router.post(
+  "/:customerid/assigncontact",
+  [check("contactid", "Contact's id is required").notEmpty()],
+  customerController.assignMainContact
+)
 module.exports = router
