@@ -57,6 +57,8 @@ exports.getSingleCustomer = async (req, res) => {
     const foundCustomer = await Customer.findById(customerid)
       .populate("opportunities")
       .populate("projects")
+      .populate("contacts")
+      .populate("mainContact")
 
     if (!foundCustomer) {
       res.status(400).json({
