@@ -23,4 +23,4 @@ const contactSchema = new Schema(
 
 const Contact = model("Contact", contactSchema)
 
-module.exports = User
+module.exports = Contact
