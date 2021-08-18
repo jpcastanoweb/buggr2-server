@@ -180,9 +180,13 @@ exports.convertOpportunity = async (req, res) => {
       dollarValue: opp.dollarValue,
       documents: newDocuments,
     })
-    await Opportunity.findByIdAndUpdate(opportunityid, {
-      currentStage: "Closed - Won",
-    })
+    const updatedOpp = await Opportunity.findByIdAndUpdate(
+      opportunityid,
+      {
+        currentStage: "Closed - Won",
+      },
+      { new: true }
+    )
 
     // adding to org and customer
     await Organization.findByIdAndUpdate(newProject.belongsTo, {
@@ -193,7 +197,10 @@ exports.convertOpportunity = async (req, res) => {
       $push: { projects: newProject._id },
     })
 
-    res.json(newProject)
+    res.json({
+      opportunity: updatedOpp,
+      project: newProject,
+    })
   } catch (error) {
     console.log("Error converting opp to project", error.message)
     res.status(400).json({ msg: error.message })
