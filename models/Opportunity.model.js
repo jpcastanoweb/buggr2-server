@@ -52,8 +52,12 @@ const opportunitySchema = new Schema(
       ],
       required: [true, "Stage is required."],
     },
-    posts: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    mainContact: {
+      type: Schema.Types.ObjectId,
+      ref: "Contact",
+    },
+    associatedContacts: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Contact" }],
       default: [],
     },
     documents: {
