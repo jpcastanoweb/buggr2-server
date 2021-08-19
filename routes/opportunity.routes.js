@@ -41,4 +41,17 @@ router.post(
   ],
   opportunityController.convertOpportunity
 )
+
+router.post(
+  "/:opportunityid/addcontact",
+  [check("contactid", "Contact ID is required").notEmpty()],
+  opportunityController.addContact
+)
+
+router.post(
+  "/:opportunityid/assignmaincontact",
+  [check("contactid", "Contact ID is required").notEmpty()],
+  opportunityController.assignMainContact
+)
+
 module.exports = router

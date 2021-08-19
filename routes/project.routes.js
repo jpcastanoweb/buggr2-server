@@ -35,4 +35,16 @@ router.post(
 
 router.post("/:projectid/delete", projectController.deleteProject)
 
+router.post(
+  "/:projectid/addcontact",
+  [check("contactid", "Contact ID is required").notEmpty()],
+  projectController.addContact
+)
+
+router.post(
+  "/:projectid/assignmaincontact",
+  [check("contactid", "Contact ID is required").notEmpty()],
+  projectController.assignMainContact
+)
+
 module.exports = router

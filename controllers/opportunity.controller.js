@@ -13,6 +13,7 @@ exports.getAllOpportunities = async (req, res) => {
       belongsTo,
     }).populate("forCustomer")
 
+    console.log(opps)
     return res.json(opps)
   } catch (error) {
     console.log("Error loading opportunities", error.message)
@@ -80,6 +81,8 @@ exports.getSingleOpportunity = async (req, res) => {
     const opp = await Opportunity.findById(opportunityid)
       .populate("belongsTo")
       .populate("forCustomer")
+      .populate("associatedContacts")
+      .populate("mainContact")
 
     return res.json(opp)
   } catch (error) {
@@ -96,7 +99,14 @@ exports.updateOpportunity = async (req, res) => {
   }
 
   try {
-    const { title, openedDate, closeDate, dollarValue, currentStage } = req.body
+    const {
+      title,
+      openedDate,
+      closeDate,
+      dollarValue,
+      currentStage,
+      mainContact,
+    } = req.body
     const { opportunityid } = req.params
 
     const updatedOpportunity = await Opportunity.findOneAndUpdate(
@@ -107,6 +117,7 @@ exports.updateOpportunity = async (req, res) => {
         closeDate,
         dollarValue,
         currentStage,
+        mainContact,
       },
       {
         runValidators: true,
@@ -204,5 +215,90 @@ exports.convertOpportunity = async (req, res) => {
   } catch (error) {
     console.log("Error converting opp to project", error.message)
     res.status(400).json({ msg: error.message })
+  }
+}
+
+exports.addContact = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+  try {
+    const { contactid } = req.body
+    const { opportunityid } = req.params
+    const updatedOpportunity = await Opportunity.findByIdAndUpdate(
+      opportunityid,
+      {
+        $push: { associatedContacts: contactid },
+      },
+      { new: true }
+    )
+      .populate("belongsTo")
+      .populate("forCustomer")
+      .populate("associatedContacts")
+      .populate("mainContact")
+
+    res.json(updatedOpportunity)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}
+
+exports.assignMainContact = async (req, res) => {
+  console.log("entering assign main contact")
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { contactid } = req.body
+    const { opportunityid } = req.params
+    console.log("Contactid: ", contactid)
+    console.log("opp id: ", opportunityid)
+
+    const opportunity = await Opportunity.findById(opportunityid)
+
+    console.log(opportunity)
+
+    let updatedOpportunity
+
+    console.log(opportunity.associatedContacts)
+
+    if (opportunity.associatedContacts.includes(contactid)) {
+      console.log("included it")
+      updatedOpportunity = await Opportunity.findByIdAndUpdate(
+        opportunityid,
+        { mainContact: contactid },
+        { new: true }
+      )
+        .populate("belongsTo")
+        .populate("forCustomer")
+        .populate("associatedContacts")
+        .populate("mainContact")
+    } else {
+      console.log("didn't include it")
+      updatedOpportunity = await Opportunity.findByIdAndUpdate(
+        opportunityid,
+        {
+          $push: { associatedContacts: contactid },
+          mainContact: contactid,
+        },
+        { new: true }
+      )
+        .populate("belongsTo")
+        .populate("forCustomer")
+        .populate("associatedContacts")
+        .populate("mainContact")
+    }
+
+    console.log(updatedOpportunity)
+    res.json(updatedOpportunity)
+  } catch (error) {
+    res.status(400).json(error)
   }
 }

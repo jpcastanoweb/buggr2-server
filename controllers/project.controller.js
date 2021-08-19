@@ -27,6 +27,8 @@ exports.getSingleProject = async (req, res) => {
     const project = await Project.findById(projectid)
       .populate("belongsTo")
       .populate("forCustomer")
+      .populate("associatedContacts")
+      .populate("mainContact")
 
     return res.json(project)
   } catch (error) {
@@ -50,6 +52,7 @@ exports.createProject = async (req, res) => {
     startDate,
     dueDate,
     currentStage,
+    mainContact,
   } = req.body
 
   const belongsToObject = mongoose.Types.ObjectId(belongsTo)
@@ -141,6 +144,92 @@ exports.deleteProject = async (req, res) => {
     res.json(deletedProject)
   } catch (error) {
     console.log("Error deleting project: ", error.message)
+    res.status(400).json(error)
+  }
+}
+
+exports.addContact = async (req, res) => {
+  console.log("entering")
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+  try {
+    const { contactid } = req.body
+    const { projectid } = req.params
+    const updatedProject = await Project.findByIdAndUpdate(
+      [projectid],
+      {
+        $push: { associatedContacts: contactid },
+      },
+      { new: true }
+    )
+      .populate("belongsTo")
+      .populate("forCustomer")
+      .populate("associatedContacts")
+      .populate("mainContact")
+
+    res.json(updatedProject)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}
+
+exports.assignMainContact = async (req, res) => {
+  console.log("entering assign main contact")
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { contactid } = req.body
+    const { projectid } = req.params
+    console.log("Contactid: ", contactid)
+    console.log("project id: ", projectid)
+
+    const project = await Project.findById(projectid)
+
+    console.log(project)
+
+    let updatedProject
+
+    console.log(project.associatedContacts)
+
+    if (project.associatedContacts.includes(contactid)) {
+      console.log("included it")
+      updatedProject = await Project.findByIdAndUpdate(
+        projectid,
+        { mainContact: contactid },
+        { new: true }
+      )
+        .populate("belongsTo")
+        .populate("forCustomer")
+        .populate("associatedContacts")
+        .populate("mainContact")
+    } else {
+      console.log("didn't include it")
+      updatedProject = await Project.findByIdAndUpdate(
+        projectid,
+        {
+          $push: { associatedContacts: contactid },
+          mainContact: contactid,
+        },
+        { new: true }
+      )
+        .populate("belongsTo")
+        .populate("forCustomer")
+        .populate("associatedContacts")
+        .populate("mainContact")
+    }
+
+    console.log(updatedProject)
+    res.json(updatedProject)
+  } catch (error) {
     res.status(400).json(error)
   }
 }
