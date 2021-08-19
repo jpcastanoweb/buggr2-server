@@ -13,7 +13,6 @@ exports.getAllOpportunities = async (req, res) => {
       belongsTo,
     }).populate("forCustomer")
 
-    console.log(opps)
     return res.json(opps)
   } catch (error) {
     console.log("Error loading opportunities", error.message)
@@ -228,7 +227,10 @@ exports.addContact = async (req, res) => {
   try {
     const { contactid } = req.body
     const { opportunityid } = req.params
-    const updatedOpportunity = await Opportunity.findByIdAndUpdate(
+
+    let opportunity = await Opportunity.findById(opportunityid)
+
+    opportunity = await Opportunity.findByIdAndUpdate(
       opportunityid,
       {
         $push: { associatedContacts: contactid },
@@ -240,14 +242,13 @@ exports.addContact = async (req, res) => {
       .populate("associatedContacts")
       .populate("mainContact")
 
-    res.json(updatedOpportunity)
+    res.json(opportunity)
   } catch (error) {
     res.status(400).json(error)
   }
 }
 
 exports.assignMainContact = async (req, res) => {
-  console.log("entering assign main contact")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -258,19 +259,12 @@ exports.assignMainContact = async (req, res) => {
   try {
     const { contactid } = req.body
     const { opportunityid } = req.params
-    console.log("Contactid: ", contactid)
-    console.log("opp id: ", opportunityid)
 
     const opportunity = await Opportunity.findById(opportunityid)
 
-    console.log(opportunity)
-
     let updatedOpportunity
 
-    console.log(opportunity.associatedContacts)
-
     if (opportunity.associatedContacts.includes(contactid)) {
-      console.log("included it")
       updatedOpportunity = await Opportunity.findByIdAndUpdate(
         opportunityid,
         { mainContact: contactid },
@@ -281,7 +275,6 @@ exports.assignMainContact = async (req, res) => {
         .populate("associatedContacts")
         .populate("mainContact")
     } else {
-      console.log("didn't include it")
       updatedOpportunity = await Opportunity.findByIdAndUpdate(
         opportunityid,
         {
@@ -296,7 +289,6 @@ exports.assignMainContact = async (req, res) => {
         .populate("mainContact")
     }
 
-    console.log(updatedOpportunity)
     res.json(updatedOpportunity)
   } catch (error) {
     res.status(400).json(error)
