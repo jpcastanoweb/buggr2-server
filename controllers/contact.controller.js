@@ -28,7 +28,6 @@ exports.getSingleContact = async (req, res) => {
 }
 
 exports.createContact = async (req, res) => {
-  console.log("entering create contact")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(403).json({
@@ -36,7 +35,6 @@ exports.createContact = async (req, res) => {
     })
   }
 
-  console.log("Hola?")
   try {
     const { firstName, lastName, email, phoneNumber, ownerid } = req.body
     const newContact = await Contact.create({
@@ -45,8 +43,6 @@ exports.createContact = async (req, res) => {
       email,
       phoneNumber,
     })
-
-    console.log("New Contact: ", newContact)
 
     await Customer.findByIdAndUpdate(ownerid, {
       $push: { contacts: newContact._id },
@@ -88,7 +84,6 @@ exports.updateContact = async (req, res) => {
       { new: true }
     )
 
-    console.log("Updated Contact: ", updatedContact)
     res.json(updatedContact)
   } catch (error) {
     res.status(400).json(error)
@@ -115,7 +110,6 @@ exports.deleteContact = async (req, res) => {
   try {
     // delete as main contact if main contact
     const customer = await Customer.findById(ownerid)
-    console.log("Customer found", customer)
 
     if (!customer) {
       res.status(400).json({

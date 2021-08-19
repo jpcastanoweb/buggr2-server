@@ -98,7 +98,14 @@ exports.updateProject = async (req, res) => {
   }
 
   try {
-    const { title, startDate, dueDate, dollarValue, currentStage } = req.body
+    const {
+      title,
+      startDate,
+      dueDate,
+      dollarValue,
+      currentStage,
+      mainContact,
+    } = req.body
     const { projectid } = req.params
 
     const updatedProject = await Project.findOneAndUpdate(
@@ -109,6 +116,7 @@ exports.updateProject = async (req, res) => {
         dueDate,
         dollarValue,
         currentStage,
+        mainContact,
       },
       {
         runValidators: true,
@@ -149,7 +157,6 @@ exports.deleteProject = async (req, res) => {
 }
 
 exports.addContact = async (req, res) => {
-  console.log("entering")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -159,8 +166,11 @@ exports.addContact = async (req, res) => {
   try {
     const { contactid } = req.body
     const { projectid } = req.params
-    const updatedProject = await Project.findByIdAndUpdate(
-      [projectid],
+
+    let project = await Project.findById(projectid)
+
+    project = await Project.findByIdAndUpdate(
+      projectid,
       {
         $push: { associatedContacts: contactid },
       },
@@ -171,14 +181,13 @@ exports.addContact = async (req, res) => {
       .populate("associatedContacts")
       .populate("mainContact")
 
-    res.json(updatedProject)
+    res.json(project)
   } catch (error) {
     res.status(400).json(error)
   }
 }
 
 exports.assignMainContact = async (req, res) => {
-  console.log("entering assign main contact")
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -189,8 +198,6 @@ exports.assignMainContact = async (req, res) => {
   try {
     const { contactid } = req.body
     const { projectid } = req.params
-    console.log("Contactid: ", contactid)
-    console.log("project id: ", projectid)
 
     const project = await Project.findById(projectid)
 
@@ -201,7 +208,6 @@ exports.assignMainContact = async (req, res) => {
     console.log(project.associatedContacts)
 
     if (project.associatedContacts.includes(contactid)) {
-      console.log("included it")
       updatedProject = await Project.findByIdAndUpdate(
         projectid,
         { mainContact: contactid },
@@ -212,7 +218,6 @@ exports.assignMainContact = async (req, res) => {
         .populate("associatedContacts")
         .populate("mainContact")
     } else {
-      console.log("didn't include it")
       updatedProject = await Project.findByIdAndUpdate(
         projectid,
         {
@@ -227,7 +232,6 @@ exports.assignMainContact = async (req, res) => {
         .populate("mainContact")
     }
 
-    console.log(updatedProject)
     res.json(updatedProject)
   } catch (error) {
     res.status(400).json(error)

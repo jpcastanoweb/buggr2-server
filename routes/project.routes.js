@@ -25,7 +25,6 @@ router.post(
   [
     check("title", "Title is required").notEmpty(),
     check("startDate", "Start Date  is required").notEmpty(),
-    check("dueDate", "Due Date is required").notEmpty(),
     check("dollarValue", "Dollar value is required.").notEmpty(),
     check("currentStage", "Stage is required.").notEmpty(),
     //add check for dates
