@@ -104,3 +104,49 @@ exports.updateUser = async (req, res) => {
     res.status(400).json(error)
   }
 }
+
+exports.updateAccountInfo = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { email } = req.body
+    const { userid } = req.params
+    const updatedUser = await User.findByIdAndUpdate(
+      userid,
+      { email },
+      { new: true }
+    )
+
+    res.json(updatedUser)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}
+
+exports.updateProfileInfo = async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      msg: errors.array(),
+    })
+  }
+
+  try {
+    const { firstName, lastName, pictureURL } = req.body
+    const { userid } = req.params
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userid,
+      { firstName, lastName, pictureURL },
+      { new: true }
+    )
+    res.json(updatedUser)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+}

@@ -35,4 +35,20 @@ router.post(
   userController.updateUser
 )
 
+// --- UPDATE ACCOUT (EMAIL)
+router.post(
+  "/:userid/update-email",
+  [
+    check("email", "Email is required").notEmpty(),
+    check("email", "Please use a valid email.").isEmail(),
+  ],
+  userController.updateAccountInfo
+)
+
+router.post(
+  "/:userid/update-profile",
+  [check("firstName", "First Name is required").notEmpty()],
+  userController.updateProfileInfo
+)
+
 module.exports = router
