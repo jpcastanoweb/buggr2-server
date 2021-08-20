@@ -10,6 +10,9 @@ exports.getAllCustomers = async (req, res) => {
     let customers = await Customer.find({
       belongsTo,
     })
+      .populate("projects")
+      .populate("opportunities")
+      .populate("mainContact")
     return res.json(customers)
   } catch (error) {
     console.log("Error loading customers", error.message)
