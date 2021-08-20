@@ -80,10 +80,10 @@ router.post("/create-session", async (req, res) => {
   try {
     const response = await stripe.checkout.sessions.create({
       success_url:
-        process.env.LOCALHOST_URL +
+        process.env.CLIENT_URL +
         "/subscribe/successful-session?session_id={CHECKOUT_SESSION_ID}",
       cancel_url:
-        process.env.LOCALHOST_URL +
+        process.env.CLIENT_URL +
         "/subscribe/failed-session?session_id={CHECKOUT_SESSION_ID}",
       payment_method_types: ["card"],
       line_items: [{ price, quantity: 1 }],
