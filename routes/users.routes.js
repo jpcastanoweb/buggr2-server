@@ -51,4 +51,9 @@ router.post(
   userController.updateProfileInfo
 )
 
+router.post(
+  "/:userid/update-subscription-status",
+  userController.updateSubscription
+)
+
 module.exports = router

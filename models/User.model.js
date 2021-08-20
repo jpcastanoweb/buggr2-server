@@ -37,6 +37,21 @@ const userSchema = new Schema(
       type: [{ type: Schema.Types.ObjectId, ref: "Organization" }],
       default: [],
     },
+    subscriptionStatus: {
+      type: String,
+    },
+    subscription: {
+      id: String,
+      object: String,
+      status: String,
+      latest_invoice: {
+        id: String,
+        status: String,
+        payment_intent: {
+          status: String,
+        },
+      },
+    },
   },
   {
     timestamps: true,
