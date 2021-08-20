@@ -137,12 +137,12 @@ exports.updateProfileInfo = async (req, res) => {
   }
 
   try {
-    const { firstName, lastName, pictureURL } = req.body
+    const { firstName, lastName } = req.body
     const { userid } = req.params
 
     const updatedUser = await User.findByIdAndUpdate(
       userid,
-      { firstName, lastName, pictureURL },
+      { firstName, lastName },
       { new: true }
     )
     res.json(updatedUser)
