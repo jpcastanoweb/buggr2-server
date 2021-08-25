@@ -46,6 +46,10 @@ const customerSchema = new Schema(
       ],
       default: [],
     },
+    notes: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Note" }],
+      default: [],
+    },
   },
   {
     timestamps: true,
