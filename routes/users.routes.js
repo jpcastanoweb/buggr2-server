@@ -15,8 +15,8 @@ router.post(
     check("password", "Password is required").notEmpty(),
     check(
       "password",
-      "Password must be at least 8 characters, must include at least 1 lowercase letter, 1 uppercase letter, 1 symbol and 1 number. "
-    ).isStrongPassword(),
+      "Password must be at least 8 characters, must include at least 1 lowercase letter, 1 uppercase letter and 1 number. "
+    ).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/),
     check("firstName", "First Name is required.").notEmpty(),
     check("lastName", "Last Name is required.").notEmpty(),
   ],
