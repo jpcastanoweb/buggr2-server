@@ -5,7 +5,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST)
 router.post
 
 router.post("/create-customer", async (req, res) => {
-  console.log("entering create customer")
   try {
     const { firstName, lastName, email } = req.body
     await stripe.customers
@@ -15,7 +14,6 @@ router.post("/create-customer", async (req, res) => {
         name: firstName + lastName ? lastName : "",
       })
       .then((response) => {
-        console.log("finished create from stripe")
         return response.json()
       })
       .then((result) => {
@@ -90,7 +88,6 @@ router.post("/create-session", async (req, res) => {
       client_reference_id: userid,
       mode: "subscription",
     })
-    console.log(response.url)
     res.json(response.url)
   } catch (error) {
     console.log(error)
@@ -102,7 +99,6 @@ router.get("/request-session/:sessionid", async (req, res) => {
   const { sessionid } = req.params
   try {
     const foundSession = await stripe.checkout.sessions.retrieve(sessionid)
-    console.log("Found Session", foundSession)
 
     res.json(foundSession)
   } catch (error) {
@@ -116,7 +112,6 @@ router.get("/request-subscription/:subscriptionid", async (req, res) => {
     const foundSubscription = await stripe.subscriptions.retrieve(
       subscriptionid
     )
-    console.log("Found Subscription", foundSubscription)
 
     res.json(foundSubscription)
   } catch (error) {

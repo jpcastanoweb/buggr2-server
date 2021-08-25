@@ -201,11 +201,7 @@ exports.assignMainContact = async (req, res) => {
 
     const project = await Project.findById(projectid)
 
-    console.log(project)
-
     let updatedProject
-
-    console.log(project.associatedContacts)
 
     if (project.associatedContacts.includes(contactid)) {
       updatedProject = await Project.findByIdAndUpdate(

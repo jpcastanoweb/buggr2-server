@@ -154,8 +154,6 @@ exports.updateProfileInfo = async (req, res) => {
 exports.updateSubscription = async (req, res) => {
   const { subscription } = req.body
   const { userid } = req.params
-
-  console.log("Got to backend updateSubscription")
   try {
     const updatedUser = await User.findByIdAndUpdate(
       userid,
@@ -165,8 +163,6 @@ exports.updateSubscription = async (req, res) => {
       },
       { new: true }
     )
-
-    console.log("Updated user in backend: ", updatedUser)
     res.json(updatedUser)
   } catch (error) {
     res.status(400).json(error)
