@@ -25,6 +25,7 @@ app.use("/api/opportunities", require("./routes/opportunity.routes"))
 app.use("/api/projects", require("./routes/project.routes"))
 app.use("/api/orgs", require("./routes/org.routes"))
 app.use("/api/contacts", require("./routes/contact.routes"))
+app.use("/api/notes", require("./routes/note.routes"))
 
 app.post("/app/payment", async (req, res) => {
   let { amount, id } = req.body
