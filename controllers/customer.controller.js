@@ -13,6 +13,7 @@ exports.getAllCustomers = async (req, res) => {
       .populate("projects")
       .populate("opportunities")
       .populate("mainContact")
+      .populate("notes")
     return res.json(customers)
   } catch (error) {
     console.log("Error loading customers", error.message)
@@ -62,6 +63,7 @@ exports.getSingleCustomer = async (req, res) => {
       .populate("projects")
       .populate("contacts")
       .populate("mainContact")
+      .populate("notes")
 
     if (!foundCustomer) {
       res.status(400).json({
