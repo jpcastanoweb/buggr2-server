@@ -29,6 +29,7 @@ exports.getSingleProject = async (req, res) => {
       .populate("forCustomer")
       .populate("associatedContacts")
       .populate("mainContact")
+      .populate("notes")
 
     return res.json(project)
   } catch (error) {
@@ -180,6 +181,7 @@ exports.addContact = async (req, res) => {
       .populate("forCustomer")
       .populate("associatedContacts")
       .populate("mainContact")
+      .populate("notes")
 
     res.json(project)
   } catch (error) {
@@ -213,6 +215,7 @@ exports.assignMainContact = async (req, res) => {
         .populate("forCustomer")
         .populate("associatedContacts")
         .populate("mainContact")
+        .populate("notes")
     } else {
       updatedProject = await Project.findByIdAndUpdate(
         projectid,
@@ -226,6 +229,7 @@ exports.assignMainContact = async (req, res) => {
         .populate("forCustomer")
         .populate("associatedContacts")
         .populate("mainContact")
+        .populate("notes")
     }
 
     res.json(updatedProject)

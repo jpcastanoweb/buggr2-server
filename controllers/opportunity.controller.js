@@ -82,6 +82,7 @@ exports.getSingleOpportunity = async (req, res) => {
       .populate("forCustomer")
       .populate("associatedContacts")
       .populate("mainContact")
+      .populate("notes")
 
     return res.json(opp)
   } catch (error) {
@@ -241,6 +242,7 @@ exports.addContact = async (req, res) => {
       .populate("forCustomer")
       .populate("associatedContacts")
       .populate("mainContact")
+      .populate("notes")
 
     res.json(opportunity)
   } catch (error) {
@@ -274,6 +276,7 @@ exports.assignMainContact = async (req, res) => {
         .populate("forCustomer")
         .populate("associatedContacts")
         .populate("mainContact")
+        .populate("notes")
     } else {
       updatedOpportunity = await Opportunity.findByIdAndUpdate(
         opportunityid,
@@ -287,6 +290,7 @@ exports.assignMainContact = async (req, res) => {
         .populate("forCustomer")
         .populate("associatedContacts")
         .populate("mainContact")
+        .populate("notes")
     }
 
     res.json(updatedOpportunity)
