@@ -24,7 +24,7 @@ exports.registerUser = async (req, res) => {
 
   try {
     // check if email exists already
-    const existingUser = await User.find({ email: email })
+    const existingUser = await User.findOne({ email: email })
     if (existingUser) return res.status(400).send({ msg: "existingEmail" })
 
     // hash password before signing up
