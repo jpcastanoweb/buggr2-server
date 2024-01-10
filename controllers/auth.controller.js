@@ -40,8 +40,6 @@ exports.loginUser = async (req, res) => {
       },
     };
 
-    console.log("payload", payload);
-
     jwt.sign(
       payload,
       process.env.SECRET,
